@@ -1,0 +1,66 @@
+@startuml
+class Network {
+- devices: List<Device>
++ addLightweightDevice(LightWeight): void
++ addSmartDevice(Smart): void
+- checkIfSmartDeviceNameIsTaken(String): boolean
++ addNormalDevice(Normal): void
+}
+abstract class Device {
+# {static} numOfAllInstances: int
+# yearlyPowerLoss: int
+# age: int
+# batteryLife: int
+- Device(age:int, batteryLife: int)
++ {abstract} calculateRemainingPower(): int
+}
+class Lightweight extends Device {
+- {static} numOfLightweightDevices: int
+- {static} YEARLY_POWER_LOSS: int
+}
+abstract class DeviceWithExactScreenSize extends Device {
+# screenSize: ScreenSize
+# {static} allCreatedInstances: List<DeviceWithExactScreenSize>
+}
+class Smart extends DeviceWithExactScreenSize {
+- name: String
+- {static} YEARLY_POWER_LOSS: int
++ getNormalDevicesWithDifferingPower(int)
+}
+class Normal extends DeviceWithExactScreenSize {
+- {static} YEARLY_POWER_LOSS: int
+- {static} YEAR_THAT_AFFECTS_POWER: int
+- yearOfManufacture: int
+- checkIfManufacturedBeforeYearThatAffectsPower(): boolean
+}
+enum ScreenSize {
+EDTV(5),
+HD(10),
+FULL_HD(15),
+UHD(20);
+- yearlyPowerLoss: int
+}
+
+Network *-- Device
+ScreenSize -- DeviceWithExactScreenSize
+@enduml
+
+In a home Network, there are multiple Devices with multiple attributes and capabilities.
+
+There are 3 types of Devices: Lightweight, Normal and Smart. The Network knows about all Devices.
+Every Device has an age and a battery life which is set when they are registered at the system.
+Smart and Normal Devices have an actual screen size as well,
+while Lightweight Devices know the number of all other Lightweight Devices on the Network.
+Smart has an additional name attribute which has to be unique (just don’t write the same for 2),
+also they can show the number of Normal Devices whose remaining power differs from theirs
+within a range by a given amount.
+Normal Devices have an additional attribute as well, we know the year when they were manufactured.
+Also, all of them are able to calculate their own remaining power.
+This differs based on the Device:
+Lightweight - loses 7 for every age, plus have 20 more “power” for each Connected Device on the
+Network beside of them
+Smart - loses 15 for every age, also loses a fix amount based on their screen size
+(EDTV - 5, HD - 10, FULL HD - 15, UHD - 20)
+Normal - loses 3 for every age, if it was manufactured in 2000 or later its power is
+doubled if earlier it is halved
+Implement these classes and their methods using the OOP principles!
